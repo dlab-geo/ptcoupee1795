@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css" />
+        <link rel="stylesheet" type="text/css" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css" />
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+         
+        <div id="slides_container">
+        <i>Draft</i>
+        <h1>The 1795 Slave Conspiracy,
+        Pointe Coupee, Louisiana</h1>
+
+        <div id="sidebar_info"></div>
+
+        </div>
+
+        
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet-heat.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/OSMBuildings-Leaflet.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/leaflet-tilelayer-wmts.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="data/PointeCoupeeAreas1.js"></script>
+        <script src="data/PointeCoupeeParishBoundary2.js"></script>
+        <script src="data/PointeCoupeePlaces3.js"></script>
+        <script>
+
+        var highlightLayer;
+        function highlightFeature(e) {
+        document.getElementById('sidebar_info').innerHTML = " ";
+
+            highlightLayer = e.target;
+
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        highlightLayer.openPopup();
+        }
+
+         /*
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
+        */
+
+
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:16, minZoom:10
+        }).fitBounds([[30.4417603892,-91.8986553826],[31.043770444,-91.2206197362]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.addAttribution('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a>');
+        var bounds_group = new L.featureGroup([]);
+        var basemap0 = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+            maxZoom: 28
+        });
+        basemap0.addTo(map);
+        function setBounds() {
+        }
+        function geoJson2heat(geojson, weight) {
+          return geojson.features.map(function(feature) {
+            return [
+              feature.geometry.coordinates[1],
+              feature.geometry.coordinates[0],
+              feature.properties[weight]
+            ];
+          });
+        }
+        var img_atchafalayageo38570 = 'data/atchafalaya_geo_3857.png';
+        var img_bounds_atchafalayageo38570 = [[29.4262144573,-92.7525911405],[31.374821596,-90.8478994911]];
+        var overlay_atchafalayageo38570 = new L.imageOverlay(img_atchafalayageo38570, img_bounds_atchafalayageo38570);
+        bounds_group.addLayer(overlay_atchafalayageo38570);
+        map.addLayer(overlay_atchafalayageo38570);
+        function pop_PointeCoupeeAreas1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_PointeCoupeeAreas1(feature));
+
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? Autolinker.link(String(feature.properties['id'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['desc'] !== null ? Autolinker.link(String(feature.properties['desc'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_PointeCoupeeAreas1() {
+            return {
+                pane: 'pane_PointeCoupeeAreas1',
+                opacity: 1,
+                color: 'rgba(78,79,7,0.97)',
+                dashArray: '10,5',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 3.0, 
+                fillOpacity: 0,
+            }
+        }
+        map.createPane('pane_PointeCoupeeAreas1');
+        map.getPane('pane_PointeCoupeeAreas1').style.zIndex = 601;
+        map.getPane('pane_PointeCoupeeAreas1').style['mix-blend-mode'] = 'normal';
+    var layer_PointeCoupeeAreas1 = new L.geoJson(json_PointeCoupeeAreas1, {
+        attribution: '<a href=""></a>',
+        pane: 'pane_PointeCoupeeAreas1',
+       //onEachFeature: pop_PointeCoupeeAreas1,
+        style: style_PointeCoupeeAreas1
+    });
+        bounds_group.addLayer(layer_PointeCoupeeAreas1);
+        map.addLayer(layer_PointeCoupeeAreas1);
+        function pop_PointeCoupeeParishBoundary2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_PointeCoupeeParishBoundary2(feature));
+
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? Autolinker.link(String(feature.properties['id'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['name'] !== null ? Autolinker.link(String(feature.properties['name'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_PointeCoupeeParishBoundary2() {
+            return {
+                pane: 'pane_PointeCoupeeParishBoundary2',
+                opacity: 1,
+                color: 'rgba(224,7,37,0.6)',
+                dashArray: '10,5',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 11.0, 
+                fillOpacity: 0,
+            }
+        }
+        map.createPane('pane_PointeCoupeeParishBoundary2');
+        map.getPane('pane_PointeCoupeeParishBoundary2').style.zIndex = 602;
+        map.getPane('pane_PointeCoupeeParishBoundary2').style['mix-blend-mode'] = 'normal';
+    var layer_PointeCoupeeParishBoundary2 = new L.geoJson(json_PointeCoupeeParishBoundary2, {
+        attribution: '<a href=""></a>',
+        pane: 'pane_PointeCoupeeParishBoundary2',
+        ///onEachFeature: pop_PointeCoupeeParishBoundary2,
+        style: style_PointeCoupeeParishBoundary2
+    });
+        bounds_group.addLayer(layer_PointeCoupeeParishBoundary2);
+        map.addLayer(layer_PointeCoupeeParishBoundary2);
+        function pop_PointeCoupeePlaces3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_PointeCoupeePlaces3(feature));
+
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            /*
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? Autolinker.link(String(feature.properties['id'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['bnum'] !== null ? Autolinker.link(String(feature.properties['bnum'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['descriptio'] !== null ? Autolinker.link(String(feature.properties['descriptio'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['name'] !== null ? Autolinker.link(String(feature.properties['name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['loc1795'] !== null ? Autolinker.link(String(feature.properties['loc1795'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            */
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['name'] !== null ? Autolinker.link(String(feature.properties['name'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_PointeCoupeePlaces3() {
+            return {
+                pane: 'pane_PointeCoupeePlaces3',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+            }
+        }
+        map.createPane('pane_PointeCoupeePlaces3');
+        map.getPane('pane_PointeCoupeePlaces3').style.zIndex = 603;
+        map.getPane('pane_PointeCoupeePlaces3').style['mix-blend-mode'] = 'normal';
+
+        //-------------------------------------------------------------------------------------------------
+
+        function pop_PointeCoupeePlaces3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_PointeCoupeePlaces3(feature));
+
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+
+        click: function populate() {
+            var ptext = "<b>" + feature.properties.name + "</b> <p>" + feature.properties.desc + "</p>";
+            //<p>" + feature.properties.details + "</p>";
+            if (feature.properties.photo != "none") {
+                ptext += "<img src=\"" + feature.properties.photo + "\" width=200></img>"
+            }
+                    //document.getElementById('sidebar_info').innerHTML = "<b>" + feature.properties.name + "</b> <p>" + feature.properties.desc + "</p><p>" + feature.properties.details + "</p>";
+                    document.getElementById('sidebar_info').innerHTML = ptext;
+            },
+            });
+
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['name'] !== null ? Autolinker.link(String(feature.properties['name'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+//---------------------------------------------------------------------------------------
+
+        var layer_PointeCoupeePlaces3 = new L.geoJson(json_PointeCoupeePlaces3, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_PointeCoupeePlaces3',
+            onEachFeature: pop_PointeCoupeePlaces3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_PointeCoupeePlaces3(feature));
+                /*
+                return L.circleMarker(latlng, style_PointeCoupeePlaces3(feature)).bindTooltip((feature.properties['name'] !== null?String('<div style="color: #000000; font-size: 13pt; font-family: \'.SF NS Text\', sans-serif;">' + feature.properties['name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_PointeCoupeePlaces3'}).openTooltip();
+                */
+            }
+        });
+        bounds_group.addLayer(layer_PointeCoupeePlaces3);
+        map.addLayer(layer_PointeCoupeePlaces3);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/PointeCoupeePlaces3.png" /> Pointe Coupee Places': layer_PointeCoupeePlaces3,'<img src="legend/PointeCoupeeParishBoundary2.png" /> Pointe Coupee Parish Boundary': layer_PointeCoupeeParishBoundary2,'<img src="legend/PointeCoupeeAreas1.png" /> Pointe Coupee Areas (approximate)': layer_PointeCoupeeAreas1,'<a href="https://catalog.archives.gov/id/305632" target="_blank">Map of the Atchafalaya Basin, 1863</a>': overlay_atchafalayageo38570,},{collapsed:false}).addTo(map);
+        setBounds();
+
+    function onEachFeature(feature, layer) {
+    layer.on({
+        click: function populate() {
+            document.getElementById('sidebar_info').innerHTML = " " + feature.properties.name + "<br>" + feature.properties.desc;
+        },
+    mouseout: function(e) { layer.setStyle(style_ptcoupeeptsadj3(feature)); },
+        mouseover: highlightFeature, pop_ptcoupeeptsadj3
+    });
+
+}
+        </script>
+    </body>
+</html>
